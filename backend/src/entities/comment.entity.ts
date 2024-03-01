@@ -4,9 +4,11 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Post } from './post.entity';
+import { Like } from './like.entity';
 @Entity()
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
@@ -15,7 +17,6 @@ export class Comment {
   @Column({ nullable: false })
   content: string;
 
-  //  Todo: Add update to false
   @ManyToOne((type) => User, (user) => user.comments)
   @JoinColumn({ name: 'userId' })
   user: User;
@@ -29,4 +30,7 @@ export class Comment {
 
   @Column({ update: false, nullable: false })
   postId: string;
+
+  @OneToMany((type) => Like, (like) => like.comment)
+  likes: Like[];
 }

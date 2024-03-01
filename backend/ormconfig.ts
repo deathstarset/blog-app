@@ -2,6 +2,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 import { User } from './src/entities/user.entity';
 import { Post } from './src/entities/post.entity';
 import { Comment } from './src/entities/comment.entity';
+import { Like } from './src/entities/like.entity';
 import 'dotenv/config';
 
 export const config: PostgresConnectionOptions = {
@@ -13,5 +14,5 @@ export const config: PostgresConnectionOptions = {
   password: process.env.password,
   synchronize: true,
   ssl: true,
-  entities: [User, Post, Comment],
+  entities: [User, Post, Comment, Like],
 };

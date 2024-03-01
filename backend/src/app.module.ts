@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from '../ormconfig';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
+import { LikeModule } from './like/like.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { CommentModule } from './comment/comment.module';
     TypeOrmModule.forRoot(config),
     PostModule,
     CommentModule,
+    LikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

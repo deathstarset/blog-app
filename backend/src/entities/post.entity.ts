@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Comment } from './comment.entity';
+import { Like } from './like.entity';
 
 @Entity()
 export class Post {
@@ -29,4 +30,7 @@ export class Post {
 
   @OneToMany((type) => Comment, (comment) => comment.post)
   comments: Comment[];
+
+  @OneToMany((type) => Like, (like) => like.comment)
+  likes: Like[];
 }
