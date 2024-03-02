@@ -38,7 +38,7 @@ export class CommentService {
     if (!post) {
       throw new Error('Post not found');
     }
-    const user = await this.userService.find(createCommentDto.userId);
+    const user = await this.userService.find(createCommentDto.userId, 'id');
     if (!user) {
       throw new Error('User not found');
     }

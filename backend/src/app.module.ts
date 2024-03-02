@@ -7,6 +7,7 @@ import { config } from '../ormconfig';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
 import { LikeModule } from './like/like.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { LikeModule } from './like/like.module';
     PostModule,
     CommentModule,
     LikeModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

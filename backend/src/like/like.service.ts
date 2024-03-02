@@ -44,7 +44,7 @@ export class LikeService {
   }
 
   async create(createLikeDto: CreateLikeDto) {
-    const user = await this.userService.find(createLikeDto.userId);
+    const user = await this.userService.find(createLikeDto.userId, 'id');
     if (!user) {
       throw new NotFoundException('User not found');
     }

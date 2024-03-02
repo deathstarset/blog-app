@@ -28,7 +28,7 @@ export class PostService {
   }
 
   async create(createPostDto: CreatePostDto) {
-    const user = await this.userService.find(createPostDto.userId);
+    const user = await this.userService.find(createPostDto.userId, 'id');
     if (!user) {
       throw new Error('User not found');
     }

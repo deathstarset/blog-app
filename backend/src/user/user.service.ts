@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
@@ -14,29 +14,25 @@ export class UserService {
     return this.userRepo.createQueryBuilder('user').getMany();
   }
 
-  find(id: string) {
+  find(property: string, by: 'username' | 'id') {
     return this.userRepo
       .createQueryBuilder('user')
-      .where('user.id = :id', { id })
+      .where(`user.${by} = :${by}`, { [by]: property })
       .getOne();
   }
 
   create(createUserDto: CreateUserDto) {
-    return this.userRepo
-      .createQueryBuilder()
-      .insert()
-      .into(User)
-      .values(createUserDto)
-      .execute();
+    const user = this.userRepo.create(createUserDto);
+    return this.userRepo.save(user);
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userRepo
-      .createQueryBuilder()
-      .update(User)
-      .set(updateUserDto)
-      .where('id = :id', { id })
-      .execute();
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepo.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    Object.assign(user, updateUserDto);
+    return this.userRepo.save(user);
   }
   delete(id: string) {
     return this.userRepo

@@ -1,13 +1,17 @@
 import { Post } from './post.entity';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
@@ -26,6 +30,9 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   @OneToMany((type) => Post, (post) => post.user)
   posts: Post[];
 
@@ -34,4 +41,10 @@ export class User {
 
   @OneToMany((type) => Like, (like) => like.user)
   likes: Like[];
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 }
