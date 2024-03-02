@@ -11,27 +11,28 @@ import {
 } from 'class-validator';
 import { LikeType } from 'src/entities/like.entity';
 
-export class createLikeDto {
+export class CreateLikeDto {
+  @IsNotEmpty()
   @IsBoolean()
   isLike: boolean;
 
-  @IsEnum(LikeType)
   @IsNotEmpty()
   @IsAlpha()
-  type: LikeType;
+  @IsEnum(LikeType)
+  type: 'comment' | 'post';
 
-  @IsUUID()
   @IsNotEmpty()
+  @IsUUID()
   userId: string;
 
-  @IsUUID()
-  @IsOptional()
   @IsNotEmpty()
+  @IsOptional()
+  @IsUUID()
   commentId?: string;
 
-  @IsUUID()
-  @IsOptional()
   @IsNotEmpty()
+  @IsOptional()
+  @IsUUID()
   postId?: string;
 
   @ValidateIf((o) => !o.commentId && !o.postId)
@@ -48,5 +49,5 @@ export class createLikeDto {
 }
 
 export class UpdateLikeDto extends PartialType(
-  PickType(createLikeDto, ['isLike'] as const),
+  PickType(CreateLikeDto, ['isLike'] as const),
 ) {}

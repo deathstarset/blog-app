@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { LikeController } from './like.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -16,5 +16,6 @@ import { CommentModule } from 'src/comment/comment.module';
   ],
   providers: [LikeService],
   controllers: [LikeController],
+  exports: [LikeService],
 })
 export class LikeModule {}

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from 'src/entities/comment.entity';
 import { UserModule } from 'src/user/user.module';
 import { PostModule } from 'src/post/post.module';
+
 @Module({
   imports: [TypeOrmModule.forFeature([Comment]), UserModule, PostModule],
   providers: [CommentService],

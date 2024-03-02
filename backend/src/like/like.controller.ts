@@ -8,7 +8,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { UpdateLikeDto, createLikeDto } from './like.dto';
+import { UpdateLikeDto, CreateLikeDto } from './like.dto';
 import { LikeService } from './like.service';
 
 @Controller('like')
@@ -30,7 +30,7 @@ export class LikeController {
   }
 
   @Post()
-  async addLike(@Body() createLikeDto: createLikeDto) {
+  async addLike(@Body() createLikeDto: CreateLikeDto) {
     return await this.likeService.create(createLikeDto);
   }
 

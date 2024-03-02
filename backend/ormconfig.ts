@@ -15,4 +15,5 @@ export const config: PostgresConnectionOptions = {
   synchronize: true,
   ssl: true,
   entities: [User, Post, Comment, Like],
+  logging: true,
 };

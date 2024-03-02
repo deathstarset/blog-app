@@ -4,11 +4,13 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
   OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Post } from './post.entity';
 import { Like } from './like.entity';
+
 @Entity()
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
@@ -17,20 +19,27 @@ export class Comment {
   @Column({ nullable: false })
   content: string;
 
-  @ManyToOne((type) => User, (user) => user.comments)
+  @ManyToOne((type) => User, (user) => user.comments, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
-
-  @ManyToOne((type) => Post, (post) => post.comments)
-  @JoinColumn({ name: 'postId' })
-  post: Post;
-
-  @Column({ update: false, nullable: false })
+  @Column({ update: false, type: 'uuid' })
   userId: string;
 
-  @Column({ update: false, nullable: false })
+  @ManyToOne((type) => Post, (post) => post.comments, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  @JoinColumn({ name: 'postId' })
+  post: Post;
+  @Column({ update: false, type: 'uuid' })
   postId: string;
 
-  @OneToMany((type) => Like, (like) => like.comment)
+  @OneToMany((type) => Like, (like) => like.post)
   likes: Like[];
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

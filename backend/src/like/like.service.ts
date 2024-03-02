@@ -1,8 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like } from 'src/entities/like.entity';
 import { Repository } from 'typeorm';
-import { UpdateLikeDto, createLikeDto } from './like.dto';
+import { UpdateLikeDto, CreateLikeDto } from './like.dto';
 import { UserService } from 'src/user/user.service';
 import { CommentService } from 'src/comment/comment.service';
 import { PostService } from 'src/post/post.service';
@@ -39,16 +43,29 @@ export class LikeService {
       .getOne();
   }
 
-  async create(createLikeDto: createLikeDto) {
+  async create(createLikeDto: CreateLikeDto) {
     const user = await this.userService.find(createLikeDto.userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
-    const comment = await this.commentService.find(createLikeDto.commentId);
-    const post = await this.postService.find(createLikeDto.postId);
+    if (createLikeDto.commentId) {
+      const comment = await this.commentService.find(createLikeDto.commentId);
+      if (!comment) {
+        throw new NotFoundException('Comment not found');
+      }
+    }
+    if (createLikeDto.postId) {
+      const post = await this.postService.find(createLikeDto.postId);
+      if (!post) {
+        throw new NotFoundException('Post not found');
+      }
+    }
 
-    if (!comment && !post) {
-      throw new Error('Post or Comment not found');
+    if (
+      (createLikeDto.type === 'comment' && !createLikeDto.commentId) ||
+      (createLikeDto.type === 'post' && !createLikeDto.postId)
+    ) {
+      throw new BadRequestException('Id & Type not match');
     }
 
     return this.likeRepo
