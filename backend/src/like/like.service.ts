@@ -21,26 +21,25 @@ export class LikeService {
   ) {}
 
   findAll(userId: string, commentId: string, postId: string) {
-    let likes = this.likeRepo.createQueryBuilder('like');
-
+    const queryObject: {
+      userId?: string;
+      commentId?: string;
+      postId?: string;
+    } = {};
     if (userId) {
-      likes = likes.where('like.userId = :userId', { userId });
+      queryObject.userId = userId;
     }
     if (commentId) {
-      likes = likes.where('like.commentId = :commentId', { commentId });
+      queryObject.commentId = commentId;
     }
     if (postId) {
-      likes = likes.where('like.postId = :postId', { postId });
+      queryObject.postId = postId;
     }
-
-    return likes.getMany();
+    return this.likeRepo.findBy(queryObject);
   }
 
   find(id: string) {
-    return this.likeRepo
-      .createQueryBuilder('like')
-      .where('like.id = :id', { id })
-      .getOne();
+    return this.likeRepo.findOneBy({ id });
   }
 
   async create(createLikeDto: CreateLikeDto) {
@@ -60,37 +59,30 @@ export class LikeService {
         throw new NotFoundException('Post not found');
       }
     }
-
     if (
       (createLikeDto.type === 'comment' && !createLikeDto.commentId) ||
       (createLikeDto.type === 'post' && !createLikeDto.postId)
     ) {
       throw new BadRequestException('Id & Type not match');
     }
-
-    return this.likeRepo
-      .createQueryBuilder()
-      .insert()
-      .into(Like)
-      .values(createLikeDto)
-      .execute();
+    const like = this.likeRepo.create(createLikeDto);
+    return this.likeRepo.save(like);
   }
 
-  update(id: string, updateLikeDto: UpdateLikeDto) {
-    return this.likeRepo
-      .createQueryBuilder()
-      .update()
-      .set(updateLikeDto)
-      .where('like.id = :id', { id })
-      .execute();
+  async update(id: string, updateLikeDto: UpdateLikeDto) {
+    const like = await this.find(id);
+    if (!like) {
+      throw new NotFoundException('Like not found');
+    }
+    Object.assign(like, updateLikeDto);
+    return this.likeRepo.save(like);
   }
 
-  delete(id: string) {
-    return this.likeRepo
-      .createQueryBuilder()
-      .delete()
-      .from(Like)
-      .where('like.id = :id', { id })
-      .execute();
+  async delete(id: string) {
+    const like = await this.find(id);
+    if (!like) {
+      throw new NotFoundException('like not found');
+    }
+    return this.likeRepo.remove(like);
   }
 }

@@ -23,18 +23,21 @@ export class LikeController {
     @Query('commentId') commentId?: string,
     @Query('postId') postId?: string,
   ) {
-    return await this.likeService.findAll(userId, commentId, postId);
+    const likes = await this.likeService.findAll(userId, commentId, postId);
+    return { likes, message: 'Likes fetched' };
   }
 
   @Get(':id')
   async getLike(@Param('id') id: string) {
-    return await this.likeService.find(id);
+    const like = await this.likeService.find(id);
+    return { like, message: 'Like fetched' };
   }
 
   @UseGuards(AuthenticatedGuard)
   @Post()
   async addLike(@Body() createLikeDto: CreateLikeDto) {
-    return await this.likeService.create(createLikeDto);
+    const like = await this.likeService.create(createLikeDto);
+    return { like, message: 'Like created' };
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -43,12 +46,14 @@ export class LikeController {
     @Body() updateLikeDto: UpdateLikeDto,
     @Param('id') id: string,
   ) {
-    return await this.likeService.update(id, updateLikeDto);
+    const like = await this.likeService.update(id, updateLikeDto);
+    return { like, message: 'Like edited' };
   }
 
   @UseGuards(AuthenticatedGuard)
   @Delete(':id')
   async removeLike(@Param('id') id: string) {
-    return await this.likeService.delete(id);
+    const like = await this.likeService.delete(id);
+    return { like, message: 'Like deleted' };
   }
 }

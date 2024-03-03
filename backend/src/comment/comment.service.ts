@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCommentDto, UpdateCommentDto } from './comment.dto';
@@ -16,21 +16,18 @@ export class CommentService {
   ) {}
 
   findAll(userId: string, postId: string) {
-    let comments = this.commentRepo.createQueryBuilder('comment');
+    let queryObject: { userId?: string; postId?: string } = {};
     if (userId) {
-      comments = comments.where('comment.userId = :userId', { userId });
+      queryObject.userId = userId;
     }
     if (postId) {
-      comments = comments.where('comment.postId = :postId', { postId });
+      queryObject.postId = postId;
     }
-    return comments.getMany();
+    return this.commentRepo.findBy(queryObject);
   }
 
   find(id: string) {
-    return this.commentRepo
-      .createQueryBuilder('comment')
-      .where('comment.id = :id', { id })
-      .getOne();
+    return this.commentRepo.findOneBy({ id });
   }
 
   async create(createCommentDto: CreateCommentDto) {
@@ -42,29 +39,24 @@ export class CommentService {
     if (!user) {
       throw new Error('User not found');
     }
-    return this.commentRepo
-      .createQueryBuilder()
-      .insert()
-      .into(Comment)
-      .values(createCommentDto)
-      .execute();
+    const comment = this.commentRepo.create(createCommentDto);
+    return this.commentRepo.save(comment);
   }
 
-  update(id: string, updateCommentDto: UpdateCommentDto) {
-    return this.commentRepo
-      .createQueryBuilder()
-      .update()
-      .set(updateCommentDto)
-      .where('comment.id = :id', { id })
-      .execute();
+  async update(id: string, updateCommentDto: UpdateCommentDto) {
+    const comment = await this.find(id);
+    if (!comment) {
+      throw new NotFoundException();
+    }
+    Object.assign(comment, updateCommentDto);
+    return this.commentRepo.save(comment);
   }
 
-  delete(id: string) {
-    return this.commentRepo
-      .createQueryBuilder()
-      .delete()
-      .from(Comment)
-      .where('comment.id = :id', { id })
-      .execute();
+  async delete(id: string) {
+    const comment = await this.find(id);
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+    return this.commentRepo.remove(comment);
   }
 }

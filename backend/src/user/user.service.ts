@@ -11,14 +11,11 @@ export class UserService {
   ) {}
 
   findAll() {
-    return this.userRepo.createQueryBuilder('user').getMany();
+    return this.userRepo.find();
   }
 
   find(property: string, by: 'username' | 'id') {
-    return this.userRepo
-      .createQueryBuilder('user')
-      .where(`user.${by} = :${by}`, { [by]: property })
-      .getOne();
+    return this.userRepo.findOneBy({ [by]: property });
   }
 
   create(createUserDto: CreateUserDto) {
@@ -27,19 +24,18 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.userRepo.findOne({ where: { id } });
+    const user = await this.userRepo.findOneBy({ id });
     if (!user) {
       throw new NotFoundException('User not found');
     }
     Object.assign(user, updateUserDto);
     return this.userRepo.save(user);
   }
-  delete(id: string) {
-    return this.userRepo
-      .createQueryBuilder()
-      .delete()
-      .from(User)
-      .where('id = :id', { id })
-      .execute();
+  async delete(id: string) {
+    const user = await this.userRepo.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return this.userRepo.remove(user);
   }
 }

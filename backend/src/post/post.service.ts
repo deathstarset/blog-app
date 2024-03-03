@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from 'src/entities/post.entity';
@@ -13,18 +13,15 @@ export class PostService {
   ) {}
 
   findAll(userId: string) {
-    let posts = this.postRepo.createQueryBuilder('post');
+    const queryObject: { userId?: string } = {};
     if (userId) {
-      posts = posts.where('post.userId = :userId', { userId });
+      queryObject.userId = userId;
     }
-    return posts.getMany();
+    return this.postRepo.findBy(queryObject);
   }
 
   find(id: string) {
-    return this.postRepo
-      .createQueryBuilder('post')
-      .where('post.id = :id', { id })
-      .getOne();
+    return this.postRepo.findOneBy({ id });
   }
 
   async create(createPostDto: CreatePostDto) {
@@ -32,29 +29,24 @@ export class PostService {
     if (!user) {
       throw new Error('User not found');
     }
-    return this.postRepo
-      .createQueryBuilder()
-      .insert()
-      .into(Post)
-      .values(createPostDto)
-      .execute();
+    const post = this.postRepo.create(createPostDto);
+    return this.postRepo.save(post);
   }
 
-  update(id: string, updatePostDto: UpdatePostDto) {
-    return this.postRepo
-      .createQueryBuilder()
-      .update()
-      .set(updatePostDto)
-      .where('id = :id', { id })
-      .execute();
+  async update(id: string, updatePostDto: UpdatePostDto) {
+    const post = await this.find(id);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+    Object.assign(post, updatePostDto);
+    return this.postRepo.save(post);
   }
 
-  delete(id: string) {
-    return this.postRepo
-      .createQueryBuilder()
-      .delete()
-      .from(Post)
-      .where('id = :id', { id })
-      .execute();
+  async delete(id: string) {
+    const post = await this.find(id);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+    return this.postRepo.remove(post);
   }
 }

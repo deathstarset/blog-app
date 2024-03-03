@@ -27,13 +27,15 @@ export class CommentController {
 
   @Get(':id')
   async getComment(@Param('id') id: string) {
-    return await this.commentService.find(id);
+    const comment = await this.commentService.find(id);
+    return { comment, message: 'Comment fetched' };
   }
 
   @UseGuards(AuthenticatedGuard)
   @Post()
   async addComment(@Body() createCommentDto: CreateCommentDto) {
-    return await this.commentService.create(createCommentDto);
+    const comment = await this.commentService.create(createCommentDto);
+    return { comment, message: 'Comment added' };
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -42,12 +44,14 @@ export class CommentController {
     @Param('id') id: string,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
-    return await this.commentService.update(id, updateCommentDto);
+    const comment = await this.commentService.update(id, updateCommentDto);
+    return { comment, message: 'Comment edited' };
   }
 
   @UseGuards(AuthenticatedGuard)
   @Delete(':id')
   async removeComment(@Param('id') id: string) {
-    return await this.commentService.delete(id);
+    const comment = await this.commentService.delete(id);
+    return { comment, message: 'Comment removed' };
   }
 }

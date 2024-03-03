@@ -19,19 +19,19 @@ export class UserController {
   @Get()
   async getAllUsers() {
     const users = await this.userService.findAll();
-    return { users };
+    return { users, message: 'Users fetched' };
   }
 
   @Get(':id')
   async getUser(@Param('id') id: string) {
     const user = await this.userService.find(id, 'id');
-    return { user };
+    return { user, message: 'User fetched' };
   }
 
   @Post()
   async addUser(@Body() createUserDto: CreateUserDto) {
-    const newUser = await this.userService.create(createUserDto);
-    return { newUser };
+    const user = await this.userService.create(createUserDto);
+    return { user, message: 'User added' };
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -40,14 +40,14 @@ export class UserController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    const newUser = await this.userService.update(id, updateUserDto);
-    return { newUser };
+    const user = await this.userService.update(id, updateUserDto);
+    return { user, message: 'User edited' };
   }
 
   @UseGuards(AuthenticatedGuard)
   @Delete(':id')
   async removeUser(@Param('id') id: string) {
-    const oldUser = await this.userService.delete(id);
-    return { oldUser };
+    const user = await this.userService.delete(id);
+    return { user, message: 'User removed' };
   }
 }
