@@ -1,21 +1,27 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreatePostDto {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   title: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   content: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   @IsUUID()
   userId: string;
+
+  @IsNotEmpty({ each: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsUUID('4', { each: true })
+  categories: string[];
 }
 
 export class UpdatePostDto extends PartialType(
-  OmitType(CreatePostDto, ['userId'] as const),
+  OmitType(CreatePostDto, ['userId', 'categories'] as const),
 ) {}

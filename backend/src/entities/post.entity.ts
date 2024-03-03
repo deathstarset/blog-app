@@ -6,10 +6,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
+import { Category } from './category.entity';
 
 @Entity()
 export class Post {
@@ -34,6 +37,10 @@ export class Post {
 
   @OneToMany((type) => Like, (like) => like.post)
   likes: Like[];
+
+  @ManyToMany((type) => Category, (category) => category.posts)
+  @JoinTable()
+  categories: Category[];
 
   @CreateDateColumn()
   createdAt: Date;

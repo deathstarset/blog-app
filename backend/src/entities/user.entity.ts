@@ -12,6 +12,7 @@ import {
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
 import * as bcrypt from 'bcrypt';
+import { Follow } from './follow.entity';
 
 @Entity()
 export class User {
@@ -41,6 +42,12 @@ export class User {
 
   @OneToMany((type) => Like, (like) => like.user)
   likes: Like[];
+
+  @OneToMany((type) => Follow, (follow) => follow.follower)
+  followers: Follow[];
+
+  @OneToMany((type) => Follow, (follow) => follow.following)
+  followings: Follow[];
 
   @BeforeInsert()
   @BeforeUpdate()

@@ -18,8 +18,11 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
-  async getAllposts(@Query('userId') userId: string) {
-    const posts = await this.postService.findAll(userId);
+  async getAllposts(
+    @Query('userId') userId: string,
+    @Query('category') category: string,
+  ) {
+    const posts = await this.postService.findAll(userId, category);
     return { posts, message: 'Posts fetched' };
   }
 
