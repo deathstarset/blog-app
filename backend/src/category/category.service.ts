@@ -1,7 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/entities/category.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateCategoryDto, UpdateCategoryDto } from './category.dto';
 import { NotFoundError } from 'rxjs';
 
@@ -12,12 +16,28 @@ export class CategoryService {
     private readonly categoryRepo: Repository<Category>,
   ) {}
 
-  findAll() {
+  async find(property: string, propertyName: 'id' | 'name') {
+    const category = await this.categoryRepo.findOneBy({
+      [propertyName]: property,
+    });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    return category;
+  }
+
+  async findAll(categories?: string[], propertyName?: 'id' | 'name') {
+    let categoriesArr: Category[] = [];
+    if (categories) {
+      for (const category of categories) {
+        const cat = await this.find(category, propertyName);
+        categoriesArr.push(cat);
+      }
+      return categoriesArr;
+    }
     return this.categoryRepo.find();
   }
-  find(property: string, properyName: 'id' | 'name') {
-    return this.categoryRepo.findOneBy({ [properyName]: property });
-  }
+
   async create(createCatgoryDto: CreateCategoryDto) {
     const catgory = await this.find(createCatgoryDto.name, 'name');
     if (catgory) {
@@ -28,18 +48,12 @@ export class CategoryService {
   }
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
     const category = await this.find(id, 'id');
-    if (!category) {
-      throw new NotFoundError('Catgory not found');
-    }
     Object.assign(category, updateCategoryDto);
     return this.categoryRepo.save(category);
   }
 
   async delete(id: string) {
     const category = await this.find(id, 'id');
-    if (!category) {
-      throw new NotFoundError('Catgory not found');
-    }
     return this.categoryRepo.remove(category);
   }
 }

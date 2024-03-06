@@ -14,10 +14,6 @@ export class AuthService {
   // 2
   async validate(username: string, pass: string) {
     const user = await this.userService.find(username, 'username');
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
     const isSimilar = await bcrypt.compare(pass, user.password);
     if (!isSimilar) {
       return null;

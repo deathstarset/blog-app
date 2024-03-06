@@ -22,10 +22,6 @@ export class CreateLikeDto {
   type: 'comment' | 'post';
 
   @IsNotEmpty()
-  @IsUUID()
-  userId: string;
-
-  @IsNotEmpty()
   @IsOptional()
   @IsUUID()
   commentId?: string;

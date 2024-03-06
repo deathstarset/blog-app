@@ -4,6 +4,7 @@ import { Request as Req } from 'express';
 import { CreateUserDto } from 'src/user/user.dto';
 import { UserService } from 'src/user/user.service';
 import { LocalAuthGuard } from './local.auth.guard';
+import { User } from 'src/user/user.decorator';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly userService: UserService) {}
@@ -21,7 +22,7 @@ export class AuthController {
   }
 
   @Get('logout')
-  logOut(@Request() request: Express.Request) {
+  logOut(@Request() request: Req, @User() user: any) {
     request.session.destroy((error) => {});
     return { message: 'user session has ended' };
   }

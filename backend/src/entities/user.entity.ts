@@ -14,6 +14,10 @@ import { Like } from './like.entity';
 import * as bcrypt from 'bcrypt';
 import { Follow } from './follow.entity';
 
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -27,6 +31,14 @@ export class User {
 
   @Column({ nullable: false })
   password: string;
+
+  @Column({
+    type: 'enum',
+    nullable: false,
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -28,6 +28,7 @@ export class UserController {
     return { user, message: 'User fetched' };
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Post()
   async addUser(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto);

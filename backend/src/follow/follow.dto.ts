@@ -1,11 +1,8 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsUUID, IsString } from 'class-validator';
 
 export class CreateFollowDto {
   @IsNotEmpty()
-  @IsUUID()
-  followerId: string;
-
-  @IsNotEmpty()
+  @IsString()
   @IsUUID()
   followingId: string;
 }

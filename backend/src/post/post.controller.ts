@@ -12,7 +12,13 @@ import {
 import { PostService } from './post.service';
 import { CreatePostDto, UpdatePostDto } from './post.dto';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
+import { User } from 'src/user/user.decorator';
+import { SessionUser } from 'src/user/user.types';
+import { OwnershipGuard } from './ownership.guard';
+import { Ownership } from './ownership.decorator';
+import { Post as P } from 'src/entities/post.entity';
 
+@UseGuards(OwnershipGuard)
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -34,12 +40,16 @@ export class PostController {
 
   @UseGuards(AuthenticatedGuard)
   @Post()
-  async addPost(@Body() createPostDto: CreatePostDto) {
-    const post = await this.postService.create(createPostDto);
-    return { post, message: 'Post created' };
+  async addPost(
+    @Body() createPostDto: CreatePostDto,
+    @User() user: SessionUser,
+  ) {
+    const post = await this.postService.create(user, createPostDto);
+    return { post, message: 'Post created', user };
   }
 
   @UseGuards(AuthenticatedGuard)
+  @Ownership((user: SessionUser, post: P) => user.id === post.userId)
   @Put(':id')
   async editPost(
     @Body() updatePostDto: UpdatePostDto,
@@ -50,6 +60,7 @@ export class PostController {
   }
 
   @UseGuards(AuthenticatedGuard)
+  @Ownership((user: SessionUser, post: P) => user.id === post.userId)
   @Delete(':id')
   async removePost(@Param('id') id: string) {
     const post = await this.postService.delete(id);
