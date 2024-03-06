@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Follow } from './follow.entity';
 
 export enum UserRole {
