@@ -16,10 +16,13 @@ export class CategoryService {
     private readonly categoryRepo: Repository<Category>,
   ) {}
 
-  async find(property: string, propertyName: 'id' | 'name') {
+  async find(property: string, propertyName: 'id' | 'name', from?: 'create') {
     const category = await this.categoryRepo.findOneBy({
       [propertyName]: property,
     });
+    if (from) {
+      return category;
+    }
     if (!category) {
       throw new NotFoundException('Category not found');
     }
@@ -39,7 +42,7 @@ export class CategoryService {
   }
 
   async create(createCatgoryDto: CreateCategoryDto) {
-    const catgory = await this.find(createCatgoryDto.name, 'name');
+    const catgory = await this.find(createCatgoryDto.name, 'name', 'create');
     if (catgory) {
       throw new BadRequestException('Category already existent');
     }

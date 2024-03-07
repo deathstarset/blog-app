@@ -9,6 +9,7 @@ import { AllExceptionFilter } from './exceptions/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.use(
     session({
       secret: process.env.session_secret,

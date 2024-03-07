@@ -7,7 +7,7 @@ export const Layout = () => {
   const [sideBarOpen, setSideBarOpen] = useState(false);
 
   return (
-    <div className="bg-slate-100 min-h-[100vh] h-auto">
+    <div className="bg-slate-100 min-h-[100vh] h-auto flex flex-col gap-4">
       <Navbar setSideBarOpen={setSideBarOpen} />
       <div>
         <div

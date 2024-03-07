@@ -18,8 +18,15 @@ export class UserService {
     return this.userRepo.find();
   }
 
-  async find(property: string, by: 'username' | 'id' | 'role') {
+  async find(
+    property: string,
+    by: 'username' | 'id' | 'role',
+    from?: 'create',
+  ) {
     const user = await this.userRepo.findOneBy({ [by]: property });
+    if (from) {
+      return user;
+    }
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -27,7 +34,7 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const firstAdmin = await this.find(UserRole.ADMIN, 'role');
+    const firstAdmin = await this.find(UserRole.ADMIN, 'role', 'create');
     let user: User;
     if (!firstAdmin) {
       user = this.userRepo.create({
@@ -40,7 +47,7 @@ export class UserService {
       throw new UnauthorizedException('Cannot create admin user');
     }
     const admin = await this.find(createUserDto.adminId, 'id');
-    if (!admin || admin.role !== UserRole.ADMIN) {
+    if (admin.role !== UserRole.ADMIN) {
       throw new UnauthorizedException('Admin not found | User unauthorized');
     }
     user = this.userRepo.create(createUserDto);
