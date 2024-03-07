@@ -15,7 +15,6 @@ export const config: PostgresConnectionOptions = {
   username: process.env.username,
   password: process.env.password,
   synchronize: true,
-  ssl: true,
   entities: [User, Post, Comment, Like, Follow, Category],
   logging: true,
 };
