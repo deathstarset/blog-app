@@ -3,7 +3,7 @@ import { getAllPosts } from "../api";
 import { Post } from "./Post";
 import { Skeleton } from "@/components/ui/skeleton";
 export const HomePosts = () => {
-  const { status, data } = useQuery("posts", getAllPosts);
+  const { status, data: PostsData } = useQuery("posts", getAllPosts);
   return (
     <div className="flex flex-col gap-3">
       {status === "loading" &&
@@ -12,9 +12,10 @@ export const HomePosts = () => {
             <Skeleton key={index} className="h-[200px] w-full bg-slate-300" />
           );
         })}
-      {data?.data.posts.map((post) => {
-        return <Post post={post} key={post.id} />;
-      })}
+      {PostsData &&
+        PostsData.data.posts.map((post) => {
+          return <Post post={post} key={post.id} />;
+        })}
     </div>
   );
 };

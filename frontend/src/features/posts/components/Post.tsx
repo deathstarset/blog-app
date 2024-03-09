@@ -1,42 +1,39 @@
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 import { Post as P } from "../types";
 import { useQuery } from "react-query";
-import { getUser } from "@/features/user/api";
-import { getDate } from "../utils";
+import { getUser } from "@/features/users/api";
+import { getAllComments } from "@/features/comments/api";
+import { CommentsCount } from "@/features/comments/components/CommentsCount";
+import { getAllLikes } from "@/features/likes/api";
+import { LikesCount } from "@/features/likes/components/LikesCount";
+import { PostUserInfo } from "@/features/users/components/PostUserInfo";
 
 interface PostProps {
   post: P;
 }
 export const Post = ({ post }: PostProps) => {
-  const { data } = useQuery("user", () => getUser(post.userId));
+  const { data: userData } = useQuery(["users", post.userId], () =>
+    getUser(post.userId)
+  );
+  const { data: commentsData } = useQuery(["comments", post.id], () =>
+    getAllComments(post.id, undefined)
+  );
+  const { data: likesData } = useQuery(["likes", post.id], () =>
+    getAllLikes(post.id, undefined, undefined)
+  );
 
   return (
-    <Card className="">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-3">
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col ">
-            <div className="text-sm font-medium">
-              {data?.data.user.username}
-            </div>
-            <div className="text-sm">{getDate(post.createdAt)}</div>
-          </div>
-        </CardTitle>
-        <CardDescription className="text-xl font-semibold">
-          {post.title}
-        </CardDescription>
-      </CardHeader>
-      <CardFooter className="flex justify-between"></CardFooter>
+    <Card className="p-3 flex flex-col gap-3">
+      {userData && <PostUserInfo user={userData.data.user} />}
+      <div className="text-2xl font-semibold">{post.title}</div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {likesData && <LikesCount likes={likesData.data.likes} />}
+          {commentsData && (
+            <CommentsCount comments={commentsData.data.comments} />
+          )}
+        </div>
+      </div>
     </Card>
   );
 };

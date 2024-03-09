@@ -28,7 +28,8 @@ export class CommentController {
     @Query('userId') userId?: string,
     @Query('postId') postId?: string,
   ) {
-    return await this.commentService.findAll(userId, postId);
+    const comments = await this.commentService.findAll(userId, postId);
+    return { comments, message: 'Comments fetched' };
   }
 
   @Get(':id')
