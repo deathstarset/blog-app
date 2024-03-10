@@ -28,11 +28,12 @@ export class UserController {
     return { user, message: 'User fetched' };
   }
 
+  // add the image upload for next time also
   @UseGuards(AuthenticatedGuard)
   @Post()
   async addUser(@Body() createUserDto: CreateUserDto) {
-    const user = await this.userService.create(createUserDto);
-    return { user, message: 'User added' };
+    // const user = await this.userService.create(createUserDto);
+    // return { user, message: 'User added' };
   }
 
   @UseGuards(AuthenticatedGuard)

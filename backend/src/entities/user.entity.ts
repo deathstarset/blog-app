@@ -32,6 +32,9 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
+  @Column({ nullable: false })
+  profile_image: string;
+
   @Column({
     type: 'enum',
     nullable: false,

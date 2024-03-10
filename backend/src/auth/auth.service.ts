@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -14,7 +13,6 @@ export class AuthService {
     if (!isSimilar) {
       return null;
     }
-    const { password, ...other } = user;
-    return other;
+    return user;
   }
 }

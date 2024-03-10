@@ -13,3 +13,10 @@ export interface GetPostsResponse {
   };
   message: string;
 }
+export interface GetPostResponse {
+  success: boolean;
+  data: {
+    post: Post;
+  };
+  message: string;
+}

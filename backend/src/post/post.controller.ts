@@ -17,6 +17,7 @@ import { SessionUser } from 'src/user/user.types';
 import { OwnershipGuard } from './ownership.guard';
 import { Ownership } from './ownership.decorator';
 import { Post as P } from 'src/entities/post.entity';
+import express from 'express';
 
 @UseGuards(OwnershipGuard)
 @Controller('post')

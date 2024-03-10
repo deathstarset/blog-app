@@ -33,13 +33,14 @@ export class UserService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto, profile_image: string) {
     const firstAdmin = await this.find(UserRole.ADMIN, 'role', 'create');
     let user: User;
     if (!firstAdmin) {
       user = this.userRepo.create({
         ...createUserDto,
         role: UserRole.ADMIN,
+        profile_image,
       });
       return this.userRepo.save(user);
     }
@@ -50,7 +51,7 @@ export class UserService {
     if (admin.role !== UserRole.ADMIN) {
       throw new UnauthorizedException('Admin not found | User unauthorized');
     }
-    user = this.userRepo.create(createUserDto);
+    user = this.userRepo.create({ ...createUserDto, profile_image });
     return this.userRepo.save(user);
   }
 

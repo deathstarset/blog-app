@@ -5,9 +5,14 @@ import { UserModule } from 'src/user/user.module';
 import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { SessionSerializer } from './session.serializer';
+import { UploadModule } from 'src/upload/upload.module';
 
 @Module({
-  imports: [UserModule, PassportModule.register({ session: true })],
+  imports: [
+    UserModule,
+    PassportModule.register({ session: true }),
+    UploadModule,
+  ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, SessionSerializer],
 })

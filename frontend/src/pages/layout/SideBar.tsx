@@ -31,14 +31,18 @@ export const SideBar = ({ setSideBarOpen }: SideBarProps) => {
         {sideBarLinks.map((link, index) => {
           return <a key={index}>{link}</a>;
         })}
-        <Accordion type="single" collapsible>
-          <AccordionItem value="item-1" className="border-0 p-0">
+        <Accordion type="single" collapsible className="">
+          <AccordionItem value="item-1" className="border-0">
             <AccordionTrigger className="hover:no-underline p-0 pb-2 font-bold">
               Other
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-2 text-base">
               {sideBarOther.map((link, index) => {
-                return <a key={index}>{link}</a>;
+                return (
+                  <a key={index} className="p-0">
+                    {link}
+                  </a>
+                );
               })}
             </AccordionContent>
           </AccordionItem>
